@@ -88,3 +88,41 @@ INSERT INTO records (client_id, record_date, record_type, details, recorded_by_u
 (5, '2024-05-03 10:00:00', '生活', '体調に問題なく、安定して通所している。', 5),
 (5, '2024-05-10 13:30:00', '職業訓練', '簿記の学習計画を立てた。', 5),
 (5, '2024-05-15 16:00:00', '就活', '模擬面接を実施。改善点を指摘した。', 5);
+
+ALTER TABLE clients ADD withdrawal_date DATE NULL AFTER enrollment_date;
+
+CREATE TABLE jobs (
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    company_name VARCHAR(255) NOT NULL,
+    job_title VARCHAR(255) NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
+);
+
+ALTER TABLE jobs ADD employment_type VARCHAR(50) NULL;
+ALTER TABLE jobs ADD job_number VARCHAR(255) NULL AFTER id;
+ALTER TABLE jobs ADD UNIQUE (job_number);
+
+ALTER TABLE jobs MODIFY job_title VARCHAR(512);
+ALTER TABLE jobs MODIFY job_title TEXT;
+
+
+CREATE TABLE `client_jobs` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `client_id` INT(11) NOT NULL,
+    `job_id` INT(11) NOT NULL,
+    `status` VARCHAR(50) NOT NULL DEFAULT '未記録',
+    `note` TEXT NULL,
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `client_job_unique` (`client_id`,`job_id`),
+    FOREIGN KEY (`client_id`) REFERENCES `clients`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`job_id`) REFERENCES `jobs`(`id`) ON DELETE CASCADE
+);
+
+ALTER TABLE `jobs`
+ADD COLUMN `job_description` TEXT NULL AFTER `job_title`,
+ADD COLUMN `location` VARCHAR(255) NULL AFTER `job_description`,
+ADD COLUMN `salary` VARCHAR(255) NULL AFTER `location`;
+
+ALTER TABLE jobs MODIFY company_name VARCHAR(255) NULL;

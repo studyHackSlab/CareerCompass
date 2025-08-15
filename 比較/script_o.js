@@ -1,0 +1,61 @@
+function renderClientDetails(client) {
+    console.log('renderClientDetailsが実行されました。', client);
+    const clientDetailsContent = document.getElementById('clientDetailsContent');
+    if (!client) {
+        clientDetailsContent.innerHTML =
+            '<p style="text-align: center; opacity: 0.7; padding: 2rem;">利用者を選択してください</p>';
+        return;
+    }
+
+    const clientRecords = records.filter(record => record.clientId === client.id);
+
+    clientDetailsContent.innerHTML = `
+            <div class="detail-section">
+                <div class="detail-title">📝 基本情報</div>
+                <div class="detail-content">
+                    <p><strong>名前:</strong> ${client.name}</p>
+                    <p><strong>生年月日:</strong> ${formatDate(client.dateOfBirth)}</p>
+                    <p><strong>入所日:</strong> ${formatDate(client.enrollmentDate)}</p>
+                    <p><strong>退所日:</strong> ${formatDate(client.withdrawalDate)}</p>
+                    <p><strong>最終更新:</strong> ${client.lastUpdated ? formatDateTime(client.lastUpdated) : '未更新'} (${client.lastUpdatedBy ? client.lastUpdatedBy : '---'})</p>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-title">🏠 生活状況</div>
+                <div class="detail-content">${formatTextWithLineBreaks(client.latestLifeStatus) || '記録がありません'}</div>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-title">🎓 職業訓練状況</div>
+                <div class="detail-content">${formatTextWithLineBreaks(client.latestTrainingStatus) || '記録がありません'}</div>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-title">💼 就活状況</div>
+                <div class="detail-content">${formatTextWithLineBreaks(client.latestJobHuntingStatus) || '記録がありません'}</div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="openRecordModal()">記録を追加</button>
+                <button class="btn btn-secondary" onclick="editClient(${client.id})">情報を編集</button>
+                <button class="btn btn-secondary" onclick="openClientJobsModal(currentClient.id, currentClient.client_name)">求人情報</button>
+
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-title">📋 過去の記録</div>
+                ${clientRecords.length > 0 ?
+            clientRecords.map(record => `
+                    <div class="record-item">
+                        <div class="record-header">
+                            <span class="record-type ${getRecordTypeClass(record.recordType)}">${record.recordType}</span>
+                            <span class="record-date">${formatDateTime(record.recordDate)}</span>
+                        </div>
+                        <div class="record-content">${formatTextWithLineBreaks(record.details)}</div>
+                    </div>
+                `).join('') : '<div class="detail-content">記録がありません</div>'}
+            </div>
+        `;
+    console.log('利用者詳細がレンダリングされました。');
+}

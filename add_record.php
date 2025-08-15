@@ -26,7 +26,7 @@ $current_user_id = 1;
 if ($clientId && $recordType && $recordDetails) {
     // recordsテーブルに新しい記録を挿入
     $stmt_insert = $conn->prepare("INSERT INTO records (client_id, record_date, record_type, details, recorded_by_user_id) VALUES (?, NOW(), ?, ?, ?)");
-    $stmt_insert->bind_param("isssi", $clientId, $recordType, $recordDetails, $current_user_id);
+    $stmt_insert->bind_param("issi", $clientId, $recordType, $recordDetails, $current_user_id);
     $result_insert = $stmt_insert->execute();
 
     if ($result_insert) {
